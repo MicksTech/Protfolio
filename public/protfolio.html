@@ -417,7 +417,59 @@
     const themeToggle = document.getElementById;
     const htmlElement = document.documetElement;
 
-    
+    // check for saved theme preference or default to 'light'
+    const savedTheme = localStorage.getItem('theme') || 'light';
+
+    //apply the saved theme oh page load
+    if (savedTheme == 'dark') {
+      htmlElement.setAttribute('data-theme', 'dark');
+      themeToggle.innerHTML = '<span className="moon-icon">🌙</span>';
+    } else {
+      htmlElement.removeAttribute('data-theme', 'dark');
+      themeToggle.innerHTML = '<span className="sun-icon">☀️</span>';
+    }
+
+    function toggleTheme() {
+      const currentTheme = htmlElement.getAttribute('data-theme');
+      if (currentTheme == 'dark') {
+        //switch to light mode
+        htmlElement.removeAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'light');
+        themeToggle.innerHTML = '<span className="sun-icon">☀️</span>';
+      } else {
+        // switch to dark mode
+        htmlElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        themeToggle.innerHTML = '<span className="moon-icon">🌙</span>';
+      }
+    }
+
+    // add event listener to toggle button
+    themeToggle.addEventListener('click', toggleTheme);
+
+    //Optional: listen for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    //Function to handle system theme scheme
+    function handleSystemThemeChange(e) {
+      //Only apply system theme if user hasn't set a perferences
+      if (!localStorage.getItem('theme')) {
+        if (e.matches) {
+          htmlElement.setAttribute('data-theme', 'dark');
+          themeToggle.innerHTML = '<span className="moon-icon">🌙</span>';
+        }
+        else {
+          htmlElement.removeAttribute('data-theme', 'dark');
+          themeToggle.innerHTML = '<span className="sun-icon">☀️</span>';
+        }
+      }
+    }
+
+    mediaQuery.addEventListener(handleSystemThemeChange);
+
+    if (!localStorage.getItem('theme')) {
+      handleSystemThemeChange(mediaQuery);
+    } 
   </script>
 </body>
 
